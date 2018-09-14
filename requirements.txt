@@ -1,0 +1,6 @@
+discord.py==0.15.0
+aiohttp
+websockets
+chardet
+requests_html
+time
