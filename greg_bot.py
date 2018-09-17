@@ -4,6 +4,8 @@ from discord.ext import commands
 import asyncio
 from requests_html import HTMLSession
 import time
+import json
+import requests
 
 Client = discord.Client()
 client = commands.Bot(command_prefix="!")
@@ -39,8 +41,24 @@ async def on_message(message):
                                                "**Game Description :** https://firstinspiresst01.blob.core.windows.net/ftc/2019/gonemlpg.pdf\n" % (
                                   userID))
 
+    if message.content.lower().startswith('!info'):
+        userID = message.author.id
+        await client.send_message(message.channel, "<@%s> Here is Greg's information:\n"
+                                               "**Who is Greg? :** I'm a bot made to entertain you plebeians\n"
+                                               "**Who made Greg? :** Dude named Micah. Pretty cool if you ask me...\n"
+                                               "**Do you want more of Greg? :** Ask Micah to make me cooler with more features\n" % (
+                                  userID))
+
     if message.content.lower().startswith('greg'):
         userID = message.author.id
         await client.send_message(message.channel, "Hey, <@%s>! Type !help for a list of commands" % (userID))
+
+    if message.content.lower().startswith("i'm bored") or message.content.lower().startswith("im bored"):
+        userID = message.author.id
+
+        r = requests.get('https://api.giphy.com/v1/gifs/random?api_key=828kbYMfdDPSdI8XyeilltFHRdAL8Uhu&tag=&rating=PG')
+        json_r = r.json()
+        gif_url = json_r['data']['embed_url']
+        await client.send_message(message.channel, "Well, <@%s>, enjoy this: %s" % (userID, gif_url))
 
 client.run(TOKEN)
