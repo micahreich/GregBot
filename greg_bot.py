@@ -5,6 +5,7 @@ import asyncio
 from requests_html import HTMLSession
 import time
 import json
+import numpy as np
 import requests
 
 Client = discord.Client()
@@ -24,7 +25,8 @@ async def on_message(message):
                                                    "**[1] !help :** displays a list of available commands\n"
                                                    "**[2] !manual :** provides links to FTC manuals for the 2018-19 season\n"
                                                    "**[3] !quote :** sends a random quote for your reading pleasure\n"
-                                                   "**[4] !info :** information about Greg\n" % (userID))
+                                                   "**[4] !tictac :** starts up a good 'ole game of tic-tac-toe with Greg\n"
+                                                   "**[5] !info :** information about Greg\n" % (userID))
 
     if message.content.lower().startswith('!quote'):
         session = HTMLSession()
@@ -61,4 +63,82 @@ async def on_message(message):
         gif_url = json_r['data']['embed_url']
         await client.send_message(message.channel, "Well, <@%s>, enjoy this: %s" % (userID, gif_url))
 
+    if message.content.lower().startswith("!tictac"):
+        userID = message.author.id
+        await client.send_message(message.channel, "Hey, <@%s>! Let's play tic-tac-toe; you can go first! \n**Input your moves as coordinates in the order of column, row, e.x. 1,3 = bottom left corner" % (userID))
+        board = [[':black_large_square:', ':black_large_square:', ':black_large_square:'],
+                 [':black_large_square:', ':black_large_square:', ':black_large_square:'],
+                 [':black_large_square:', ':black_large_square:', ':black_large_square:']]
+
+        def boardToString(arr):
+            board_as_str = ""
+            for i in board:
+                for j in i:
+                    board_as_str += j
+                board_as_str += '\n'
+
+            client.send_message(message.channel, board_as_str)
+
+        gameStatus = False
+
+        while gameStatus == False:
+            boardToString(board)
+            client.send_message(message.channel, "Your turn, <@%s>" % (userID))
+            
+            if message.content.lower() == "1,1":
+                board[0][0] = ':x:'
+            if message.content.lower() == "1,2":
+                board[0][1] = ':x:'
+            if message.content.lower() == "1,3":
+                board[0][2] = ':x:'
+
+            if message.content.lower() == "2,1":
+                board[1][0] = ':x:'
+            if message.content.lower() == "2,2":
+                board[1][1] = ':x:'
+            if message.content.lower() == "2,3":
+                board[1][2] = ':x:'
+
+            if message.content.lower() == "3,1":
+                board[2][0] = ':x:'
+            if message.content.lower() == "3,2":
+                board[2][1] = ':x:'
+            if message.content.lower() == "3,3":
+                board[2][2] = ':x:'
+            boardToString(board)
+
+            client.send_message(message.channel, "Greg's turn")
+            foundSpot = False
+            while foundSpot == False:
+                rind1 = np.random.randint(0, len(board[0]))
+                rind2 = np.random.randint(0, len(board[1]))
+                if board[rind1][rind2] == ":black_large_square:":
+                    board[rind1][rind2] = ":o:"
+                    foundSpot == True
+                    boardToString(board)
+                    break
+
+            if (board[0][0] == ':x:' and board[1][0] == ':x:' and board[2][0] == ':x:') \
+                    or (board[0][1] == ':x:' and board[1][1] == ':x:' and board[2][1] == ':x:') \
+                    or (board[0][2] == ':x:' and board[1][2] == ':x:' and board[2][2] == ':x:') \
+                    or (board[0][0] == ':x:' and board[0][1] == ':x:' and board[0][2] == ':x:') \
+                    or (board[1][0] == ':x:' and board[1][1] == ':x:' and board[1][2] == ':x:') \
+                    or (board[2][0] == ':x:' and board[2][1] == ':x:' and board[2][2] == ':x:') \
+                    or (board[0][0] == ':x:' and board[1][1] == ':x:' and board[2][2] == ':x:') \
+                    or (board[0][2] == ':x:' and board[1][1] == ':x:' and board[2][2] == ':x:'):
+                client.send_message(message.channel, "You have won!")
+                gameStatus = True
+
+            elif (board[0][0] == ':o:' and board[1][0] == ':o:' and board[2][0] == ':o:') \
+                    or (board[0][1] == ':o:' and board[1][1] == ':o:' and board[2][1] == ':o:') \
+                    or (board[0][2] == ':o:' and board[1][2] == ':o:' and board[2][2] == ':o:') \
+                    or (board[0][0] == ':o:' and board[0][1] == ':o:' and board[0][2] == ':o:') \
+                    or (board[1][0] == ':o:' and board[1][1] == ':o:' and board[1][2] == ':o:') \
+                    or (board[2][0] == ':o:' and board[2][1] == ':o:' and board[2][2] == ':o:') \
+                    or (board[0][0] == ':o:' and board[1][1] == ':o:' and board[2][2] == ':o:') \
+                    or (board[0][2] == ':o:' and board[1][1] == ':o:' and board[2][2] == ':o:'):
+                client.send_message(message.channel, "Greg has won!")
+        else:
+            client.send_message(message.channel, "It's a tie!")
+            gameStatus = True
 client.run(TOKEN)
