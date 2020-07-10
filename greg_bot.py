@@ -14,7 +14,7 @@ import requests
 Client = discord.Client()
 client = commands.Bot(command_prefix="!")
 
-TOKEN = 'NDkwMDI2ODcyNzcyNjI0Mzg0.DnzU0Q._tl4cCTNKbpWf3SKjdXnMmKQMt0'
+TOKEN = TOKEN
 
 @client.event
 async def on_ready():
@@ -60,11 +60,11 @@ async def on_message(message):
 
     if message.content.lower().startswith('!meme'):
         userID = message.author.id
-        reddit = praw.Reddit(client_id='_AEXMPgAMMzAyQ',
-                             client_secret='Cdzk9VgV6nTmsP1D7Wr-zcoGyBw',
-                             password='12344321',
+        reddit = praw.Reddit(client_id='CLIENT ID',
+                             client_secret='CLIENT SECRET',
+                             password='PASSWORD',
                              user_agent='reddit api for greg bot',
-                             username='MekaMuffin')
+                             username='USERNAME')
         meme_urls = []
         for submission in reddit.subreddit('dankmemes').hot(): # Change this to change the subreddit from which the memes are scraped
             meme_urls.append(submission.url)
